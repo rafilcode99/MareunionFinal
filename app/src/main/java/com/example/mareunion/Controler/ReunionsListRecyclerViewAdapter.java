@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,7 +22,6 @@ import com.example.mareunion.Event.DeleteReunionEvent;
 import com.example.mareunion.Service.ReunionApiService;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -51,7 +49,8 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
 
         final Reunion reunion = mReunionsList.get(position);
         holder.subject.setText(reunion.getSubject());
-        holder.Date.setText(reunion.getTime());
+        holder.Date.setText(reunion.getDate());
+        holder.Time.setText(reunion.getTime());
         holder.Location.setText(reunion.getLocation());
 
 
@@ -94,7 +93,7 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
         TextView Date;
         ImageButton Delete;
         RecyclerView Participants;
-        ConstraintLayout parentLayout;
+        TextView Time;
 
 
 
@@ -106,6 +105,7 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
             Date= itemView.findViewById(R.id.date_txt);
             Delete= itemView.findViewById(R.id.delete_btn);
             Participants= itemView.findViewById(R.id.emails_recyclerView);
+            Time = itemView.findViewById(R.id.time_txt);
 
 
 

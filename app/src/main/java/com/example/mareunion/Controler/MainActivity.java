@@ -2,6 +2,8 @@ package com.example.mareunion.Controler;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -17,6 +19,8 @@ import com.example.mareunion.Service.ReunionApiService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ReunionApiService mApiService;
 
     private FloatingActionButton mAddButton;
+    private ImageButton sortButton;
 
 
 
@@ -52,12 +57,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Log.d("list size", "list size is" + mReunionsList.size());
+        sortButton = findViewById(R.id.sortBy_btn);
+
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment fragment;
+                fragment = SortListFragment.newDialogInstance();
+                fragment.show(getSupportFragmentManager(), "Sort list");
+
+
+            }
+        });
+
 
     }
     public void initList(){
         mReunionsList = mApiService.getReunions();
+        //adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
         myRecyclerView.setAdapter(new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList));
     }
+
+
 
     @Override
     protected void onStart() {
