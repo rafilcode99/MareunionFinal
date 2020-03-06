@@ -3,6 +3,8 @@ package com.example.mareunion.Controler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,9 +27,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
-public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<ReunionsListRecyclerViewAdapter.ReunionsListViewHolder> {
+public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<ReunionsListRecyclerViewAdapter.ReunionsListViewHolder> implements Filterable {
 
-    private ArrayList<Reunion> mReunionsList;
+    private ArrayList<Reunion> mReunionsList, myFullList;
     private ReunionApiService mApiService;
 
 
@@ -112,8 +114,45 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return myFilter;
+    }
 
+    private Filter myFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            myFullList = (ArrayList<Reunion>) mApiService.getReunions();
 
+            if (constraint !=  null && constraint.length()> 0) {
+                constraint = constraint.toString().toUpperCase();
 
+                ArrayList<Reunion> filtredList = new ArrayList<>();
+                for (Reunion reunion : myFullList) {
+                    if (reunion.getLocation().toString().toLowerCase().contains(constraint)) {
+                        filtredList.add(reunion);
+
+                    }
+
+                }
+                results.count = filtredList.size();
+                results.values = filtredList;
+            }else{
+                results.count = myFullList.size();
+                results.values = myFullList;
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+        ArrayList<Reunion> lastList = new ArrayList<>();
+        lastList.addAll((ArrayList<Reunion>)results.values);
+        mReunionsList.addAll(lastList);
+        notifyDataSetChanged();
+        }
+    };
 
 }

@@ -285,7 +285,7 @@ public class AddReunionFragment extends DialogFragment {
         if (!validateSubject() | !validateDate()|!validateTime() | !validateEmails() |!validateLocation()){
             return;
         }else {
-            Reunion newReunion = new Reunion(mDateInput.getText().toString()+ ",", mTimeInput.getText().toString() ,mLocationInput.getEditText().getText().toString(), mSubjectInput.getEditText().getText().toString(), mParticipants);
+            Reunion newReunion = new Reunion(mDateInput.getText().toString(), mTimeInput.getText().toString() ,mLocationInput.getEditText().getText().toString(), mSubjectInput.getEditText().getText().toString(), mParticipants);
             EventBus.getDefault().post(new CreateReunionEvent(newReunion));
 
             dismiss();

@@ -33,7 +33,7 @@ public class Reunion {
   public static final Comparator<Reunion> byDate  = new Comparator<Reunion>() {
     @Override
     public int compare(Reunion r1, Reunion r2) {
-      SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.FRANCE);
+      SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yy hh:mm", Locale.FRANCE);
       String dateStr1 = (r1.getDate().toString()+ " " + r1.getTime().toString()).toString() ;
       String dateStr2 = (r2.getDate().toString()+ " " + r2.getTime().toString()).toString() ;
 

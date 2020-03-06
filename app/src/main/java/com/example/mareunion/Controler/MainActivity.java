@@ -1,8 +1,16 @@
 package com.example.mareunion.Controler;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -24,13 +32,20 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextWatcher{
     private RecyclerView myRecyclerView;
     private List<Reunion> mReunionsList;
     private ReunionApiService mApiService;
 
     private FloatingActionButton mAddButton;
     private ImageButton sortButton;
+
+    private EditText mSearchBar;
+
+
+
+
+
 
 
 
@@ -39,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mApiService = DI.getReunionApiService();
-
         myRecyclerView = findViewById(R.id.reunion_recyclerview1);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         myRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -70,12 +84,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mSearchBar = findViewById(R.id.search_input);
+        mSearchBar.addTextChangedListener(this);
+
+
+
+
 
     }
     public void initList(){
         mReunionsList = mApiService.getReunions();
-        //adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
-        myRecyclerView.setAdapter(new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList));
+        ReunionsListRecyclerViewAdapter adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
+        myRecyclerView.setAdapter(adapter);
+
     }
 
 
@@ -109,5 +130,23 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateNeighbour(CreateReunionEvent event) {
         mApiService.createReunion(event.mReunion);
         initList();
+    }
+
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        ReunionsListRecyclerViewAdapter adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
+        adapter.getFilter().filter(s);
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 }
