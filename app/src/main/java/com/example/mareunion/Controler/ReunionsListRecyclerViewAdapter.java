@@ -9,12 +9,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.mareunion.DI.DI;
 import com.example.mareunion.R;
 
 import com.example.mareunion.Model.Reunion;
@@ -119,16 +119,28 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
         return myFilter;
     }
 
+    public Filter getMyDateFilter(){
+        return myDateFilter;
+    }
+
+
+
     private Filter myFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
+            mApiService = DI.getNewInstanceApiService();
             myFullList = (ArrayList<Reunion>) mApiService.getReunions();
+            ArrayList<Reunion> filtredList = new ArrayList<>();
 
-            if (constraint !=  null && constraint.length()> 0) {
-                constraint = constraint.toString().toUpperCase();
+            if (constraint ==  null && constraint.length()== 0) {
+                filtredList.addAll(myFullList);
+            }else {
 
-                ArrayList<Reunion> filtredList = new ArrayList<>();
+
+                constraint = constraint.toString().toLowerCase();
+
+
                 for (Reunion reunion : myFullList) {
                     if (reunion.getLocation().toString().toLowerCase().contains(constraint)) {
                         filtredList.add(reunion);
@@ -136,22 +148,63 @@ public class ReunionsListRecyclerViewAdapter extends RecyclerView.Adapter<Reunio
                     }
 
                 }
-                results.count = filtredList.size();
-                results.values = filtredList;
-            }else{
-                results.count = myFullList.size();
-                results.values = myFullList;
-            }
 
+            }
+            results.values = filtredList;
             return results;
         }
 
+
+
+
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-        ArrayList<Reunion> lastList = new ArrayList<>();
-        lastList.addAll((ArrayList<Reunion>)results.values);
-        mReunionsList.addAll(lastList);
-        notifyDataSetChanged();
+
+            mReunionsList.clear();
+            mReunionsList.addAll((ArrayList)results.values);
+            notifyDataSetChanged();
+        }
+    };
+
+
+    private Filter myDateFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            mApiService = DI.getNewInstanceApiService();
+            myFullList = (ArrayList<Reunion>) mApiService.getReunions();
+            ArrayList<Reunion> filtredList = new ArrayList<>();
+
+            if (constraint ==  null && constraint.length()== 0) {
+                filtredList.addAll(myFullList);
+            }else {
+
+
+                constraint = constraint.toString().toLowerCase();
+
+
+                for (Reunion reunion : myFullList) {
+                    if (reunion.getDate().toString().toLowerCase().contains(constraint)) {
+                        filtredList.add(reunion);
+
+                    }
+
+                }
+
+            }
+            results.values = filtredList;
+            return results;
+        }
+
+
+
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+
+            mReunionsList.clear();
+            mReunionsList.addAll((ArrayList)results.values);
+            notifyDataSetChanged();
         }
     };
 

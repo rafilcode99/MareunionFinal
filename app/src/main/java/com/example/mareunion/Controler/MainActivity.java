@@ -1,16 +1,14 @@
 package com.example.mareunion.Controler;
-import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.DatePicker;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -26,39 +24,38 @@ import com.example.mareunion.Model.Reunion;
 import com.example.mareunion.Service.ReunionApiService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements TextWatcher{
+
+public class MainActivity extends AppCompatActivity{
     private RecyclerView myRecyclerView;
     private List<Reunion> mReunionsList;
     private ReunionApiService mApiService;
 
+    private DatePickerDialog.OnDateSetListener mOnDateSetListener;
+
     private FloatingActionButton mAddButton;
-    private ImageButton sortButton;
-
-    private EditText mSearchBar;
-
-
-
-
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         mApiService = DI.getReunionApiService();
         myRecyclerView = findViewById(R.id.reunion_recyclerview1);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         myRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         initList();
-
 
         mAddButton = findViewById(R.id.new_reunion_btn);
         mAddButton.setOnClickListener(new View.OnClickListener() {
@@ -71,25 +68,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher{
         });
 
         Log.d("list size", "list size is" + mReunionsList.size());
-        sortButton = findViewById(R.id.sortBy_btn);
-
-        sortButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment fragment;
-                fragment = SortListFragment.newDialogInstance();
-                fragment.show(getSupportFragmentManager(), "Sort list");
-
-
-            }
-        });
-
-        mSearchBar = findViewById(R.id.search_input);
-        mSearchBar.addTextChangedListener(this);
-
-
-
-
 
     }
     public void initList(){
@@ -115,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher{
         initList();
     }
 
+
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -134,19 +114,100 @@ public class MainActivity extends AppCompatActivity implements TextWatcher{
 
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mymenu, menu);
+
+        MenuItem searchBar = menu.findItem(R.id.search_by_location);
+        SearchView searchView = (SearchView) searchBar.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ReunionsListRecyclerViewAdapter adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
+                myRecyclerView.setAdapter(adapter);
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        MenuItem dateFilter = menu.findItem(R.id.Date_Filter_Item);
+        dateFilter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                final Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH + 1);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog dialog = new DatePickerDialog(MainActivity.this, R.style.Theme_AppCompat_Light_Dialog_MinWidth,
+                        mOnDateSetListener, year, month, day);
+                dialog.show();
+
+                mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        String date = dayOfMonth + "/" + (month+1) + "/" + year;
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                        String constraint = null;
+                        try {
+                            Date date1 = sdf.parse(date);
+                            constraint = sdf.format(date1);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        ReunionsListRecyclerViewAdapter adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
+                        myRecyclerView.setAdapter(adapter);
+                        adapter.getMyDateFilter().filter(constraint);
+
+                    }
+                };
+
+                return false;
+            }
+        });
+
+        MenuItem sortAlphaItem = menu.findItem(R.id.sortBy_Alpha_item);
+        sortAlphaItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                sortAlphabetically();
+                return false;
+            }
+        });
+
+        final MenuItem sortByDatesItem = menu.findItem(R.id.sortBy_Date_item);
+        sortByDatesItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                sortByDate();
+                return false;
+            }
+        });
+
+
+        return true;
 
     }
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        ReunionsListRecyclerViewAdapter adapter = new ReunionsListRecyclerViewAdapter((ArrayList<Reunion>) mReunionsList);
-        adapter.getFilter().filter(s);
+
+    public void sortAlphabetically(){
+        Collections.sort(mApiService.getReunions(), Reunion.byAlpha);
+        initList();
 
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
+    public void sortByDate(){
+        Collections.sort(mApiService.getReunions(), Reunion.byDate);
+        initList();
 
     }
+
+
 }

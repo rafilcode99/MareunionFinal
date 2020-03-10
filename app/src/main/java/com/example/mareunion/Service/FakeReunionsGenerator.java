@@ -12,7 +12,7 @@ public abstract class FakeReunionsGenerator  {
             new Reunion("10/03/20", "11:00", "djil", "Gestion", new ArrayList(Arrays.asList("jhon@gmail.com","tommas@gmail.com)","sandrine@gmail.com")) ),
             new Reunion("10/06/20", "10:00", "Selma", "Projet", new ArrayList(Arrays.asList("cloé@gmail.com","jane@gmail.com)", "jack@gmail.com")) ),
             new Reunion("10/03/20", "07:00", "djil", "Ouverture", new ArrayList(Arrays.asList("jhon@gmail.com","tommas@gmail.com)","sandrine@gmail.com")) ),
-            new Reunion("10/07/20", "13:00", "djill", "Particulier", new ArrayList(Arrays.asList("cloé@gmail.com","jane@gmail.com)", "jack@gmail.com")) ),
+            new Reunion("10/10/20", "13:00", "djill", "Particulier", new ArrayList(Arrays.asList("cloé@gmail.com","jane@gmail.com)", "jack@gmail.com")) ),
             new Reunion("10/03/20", "09:00", "Salle", "Urgent", new ArrayList(Arrays.asList("jhon@gmail.com","tommas@gmail.com)","sandrine@gmail.com")) ),
             new Reunion("30/03/20", "10:00", "sjill", "Solution", new ArrayList(Arrays.asList("djil@gmail.com","sil@gmail.com)","cloé@gmail.com")) ),
             new Reunion("15/04/20", "10:00", "Salle", "Instalation", new ArrayList(Arrays.asList("cloé@gmail.com","jane@gmail.com)", "jack@gmail.com")) ),

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Maréu</string>
+    <string name="search_hint">Filter by location</string>
 </resources>

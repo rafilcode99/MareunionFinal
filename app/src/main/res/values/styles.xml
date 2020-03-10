@@ -1,13 +1,29 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
     <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:queryHint">@string/search_hint</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlowButton</item>
 
 </style>
+    
+    <style name="OverFlowButton" parent="@style/Animation.Design.BottomSheetDialog">
+        <item name="android:src">@drawable/ic_filter_list_black_24dp</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Widget.ActionBar.Title"
+        parent="@style/TextAppearance.AppCompat">
+        <item name="android:textColor">@color/cardview_light_background</item>
+        <item name="android:textSize">25dp</item>
+    </style>
+
+    <style name="CustomTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/cardview_light_background</item>
+    </style>
 
     <style name="AppTheme.Full_screen_dialogue" parent="Theme.MaterialComponents.Light.Dialog">
         <!-- Customize your theme here. -->
@@ -16,6 +32,7 @@
         </item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textColor">@color/cardview_light_background</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 

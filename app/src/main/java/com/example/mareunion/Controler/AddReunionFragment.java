@@ -35,6 +35,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,8 +97,6 @@ public class AddReunionFragment extends DialogFragment {
 
         mApiService = DI.getNewInstanceApiService();
 
-
-
         mDateInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,8 +116,17 @@ public class AddReunionFragment extends DialogFragment {
         mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String date = dayOfMonth + "/" + month + "/" + year ;
-                mDateInput.setText(date);
+                String date = dayOfMonth + "/" + (month+1) + "/" + year ;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                String dateText = null;
+                try {
+                    Date date1 = sdf.parse(date);
+                    dateText = sdf.format(date1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                mDateInput.setText(dateText);
             }
 
         };
@@ -135,7 +143,6 @@ public class AddReunionFragment extends DialogFragment {
             }
         });
 
-
         mOnTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -146,11 +153,6 @@ public class AddReunionFragment extends DialogFragment {
 
         mParticipants = new ArrayList<String >();
 
-
-
-
-
-
             mAddParticipantsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -158,7 +160,9 @@ public class AddReunionFragment extends DialogFragment {
                     String email = mParticipantsInput.getEditText().getText().toString();
                     if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                         mParticipantsInput.setError("invalid email");
-                    }else{
+                    }else if (mParticipants.contains(email)){
+                        mParticipantsInput.setError("participant already exists");
+                    } else{
                         mParticipantsInput.setErrorEnabled(false);
                         mParticipants.add(email);
                         mParticipantsInput.getEditText().setText("");
@@ -184,8 +188,6 @@ public class AddReunionFragment extends DialogFragment {
                 }
 
         });
-
-
         return view;
 
     }
@@ -203,7 +205,6 @@ public class AddReunionFragment extends DialogFragment {
         Dialog dialog = getDialog();
 
     }
-
 
 
     @Override
@@ -258,7 +259,6 @@ public class AddReunionFragment extends DialogFragment {
         }
     }
 
-
     private Boolean validateDate(){
         String date = mDateInput.getText().toString();
         if (date.isEmpty()){
@@ -291,6 +291,4 @@ public class AddReunionFragment extends DialogFragment {
             dismiss();
         }
     }
-
-
 }
